@@ -42,7 +42,7 @@ lexer = lex.lex()
 
 precedence = (
     ('left', '+', '-'),
-    ('left', '*', '/'),
+    ('left', '*', '/', 'INTD', '%'),
     ('right', 'UMINUS'),
 )
 
@@ -64,8 +64,8 @@ def p_expression_binop(p): #** add more for LIST + LIST, etc
                   | expression '-' expression
                   | expression '*' expression
                   | expression '%' expression
-                  | expression INTD expression
                   | expression ',' expression
+                  | expression INTD expression
                   | expression '/' expression'''
     if p[2] == '+':
         p[0] = p[1] + p[3]
@@ -75,46 +75,52 @@ def p_expression_binop(p): #** add more for LIST + LIST, etc
         p[0] = p[1] * p[3]
     elif p[2] == '%':
         p[0] = p[1] % p[3]
+    elif p[2] == ',':
+        p[0] = (p[1], p[3])
     elif p[2] == '//':
         p[0] = p[1] // p[3]
-    elif p[2] == ',':
-        elements = [p[1],p[3]]
-        noParen = ', '.join((map(str,elements))) # could be issue w byte for byte ... , list operators - map as ints?
-        p[0] = noParen
     elif p[2] == '/':
         p[0] = p[1] / p[3]
     
-def flatten(data):
-    if isinstance(data, tuple):
-        if len(data) == 0:
-            return ()
+## flattens a tuple - useful for p_list
+## idea from:
+## https://stackoverflow.com/questions/18500541/how-to-flatten-a-tuple-in-python
+def flatten(data):                   # takes a piece of data
+    if isinstance(data, tuple):      # checks if that data is in the tuple
+        if len(data) == 0:      
+            return ()                # return empty if no data
         else:
+                                    ## else, recursively call on rest of data
             return flatten(data[0]) + flatten(data[1:])
     else:
-        return (data,)
+        return (data,)               # done when data no longer nested
+
 
 def p_list(p):
-    '''LIST : '(' expression ',' expression ')' 
-            | '(' expression ',' expression ',' ')' ''' # - it has to be ( exp , elements , ) where elements --> ( expression , expression ) - can leave List --> same thing tho
-    p[0] = (p[2], p[4])
+    "LIST : '(' expression ',' expression ')' "
+    p[0] = flatten((p[2], p[4]))
+
 
 def p_singleton(p):
     "LIST : '(' expression ',' ')'"
-  #  a = 1
-  #  t1 = (1,2)
-  #  t2 = (a, t1)
-  #  t3 = flatten(t2) -- LOOKS LIKE THIS WILL WORK W/ ELEMENTS SOLUTION ABOVE
-  #  print(t2, t3) 
     p[0] = (p[2],)
     
-def p_elist(p):
+
+def p_empty_list(p):
     '''LIST : '(' ',' ')'
             | '(' ')' '''
     p[0] = ()
 
+
 def p_expression_list(p):
     "expression : LIST"
     p[0] = p[1]
+
+
+def p_expression_trailing(p):
+    "expression : expression ',' "
+    p[0] = p[1]
+
 
 def p_expression_uminus(p):
     "expression : '-' expression %prec UMINUS"
@@ -123,7 +129,7 @@ def p_expression_uminus(p):
 
 def p_expression_group(p):
     "expression : '(' expression ')'"
-    p[0] = p[2] # concatenate p1 and p3 onto as well**
+    p[0] = p[2]
 
 
 def p_expression_number(p):
@@ -145,6 +151,7 @@ def p_error(p):
         print("Syntax error at '%s'" % p.value, file = sys.stderr)
     else:
         print("Syntax error at EOF", file = sys.stderr)
+
 
 import ply.yacc as yacc
 parser = yacc.yacc()
