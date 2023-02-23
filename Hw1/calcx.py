@@ -4,7 +4,16 @@
 # A simple calculator with variables.   This is from O'Reilly's
 # "Lex and Yacc", p. 63.
 # -----------------------------------------------------------------------------
-import sys
+
+### additions by
+
+### Matthew Virgin
+### Professor Chawathe
+### COS 301
+### HW1
+### 25 February 2023
+
+import sys # so I can output to stderr
 
 tokens = (
     'NAME', 'NUMBER', 'INTD', 
@@ -40,6 +49,7 @@ lexer = lex.lex()
 
 # Parsing rules
 
+## added INTD (i.e //) and % to precedence
 precedence = (
     ('left', '+', '-'),
     ('left', '*', '/', 'INTD', '%'),
@@ -54,10 +64,54 @@ def p_statement_assign(p):
     names[p[1]] = p[3]
 
 
-def p_statement_expr(p):
+def p_statement_expr(p):                          
     'statement : expression'
     print(p[1]) # this is output, goes to standard output
 
+
+### functions to make list/tuple operations easier
+## could have 1 func that takes operator as arg - problem for later
+def listAdd(a,b):               # assuming lists of equal length
+    result = []
+    for i in range(len(a)):
+        result.append(a[i] + b[i])
+    result = tuple(result)
+    return result
+
+def listSub(a,b):
+    result = []
+    for i in range(len(a)):
+        result.append(a[i] - b[i])
+    result = tuple(result)
+    return result
+
+def listMult(a,b):
+    result = []
+    for i in range(len(a)):
+        result.append(a[i] * b[i])
+    result = tuple(result)
+    return result
+
+def listDiv(a,b):
+    result = []
+    for i in range(len(a)):
+        result.append(a[i] / b[i])
+    result = tuple(result)
+    return result
+
+def listMod(a,b):
+    result = []
+    for i in range(len(a)):
+        result.append(a[i] % b[i])
+    result = tuple(result)
+    return result
+
+def listINTD(a,b):
+    result = []
+    for i in range(len(a)):
+        result.append(a[i] // b[i])
+    result = tuple(result)
+    return result
 
 def p_expression_binop(p): #** add more for LIST + LIST, etc
     '''expression : expression '+' expression
@@ -66,21 +120,39 @@ def p_expression_binop(p): #** add more for LIST + LIST, etc
                   | expression '%' expression
                   | expression ',' expression
                   | expression INTD expression
-                  | expression '/' expression'''
+                  | expression '/' expression '''
     if p[2] == '+':
-        p[0] = p[1] + p[3]
+        if type(p[1]) == tuple:
+            p[0] = listAdd(p[1],p[3])
+        else:               
+            p[0] = p[1] + p[3]
     elif p[2] == '-':
-        p[0] = p[1] - p[3]
+        if type(p[1]) == tuple:
+            p[0] = listSub(p[1],p[3])
+        else:
+            p[0] = p[1] - p[3]
     elif p[2] == '*':
-        p[0] = p[1] * p[3]
+        if type(p[1]) == tuple:
+            p[0] = listMult(p[1],p[3])
+        else:
+            p[0] = p[1] * p[3]
     elif p[2] == '%':
-        p[0] = p[1] % p[3]
+        if type(p[1]) == tuple:
+            p[0] = listMod(p[1],p[3])
+        else:
+            p[0] = p[1] % p[3]
     elif p[2] == ',':
         p[0] = (p[1], p[3])
     elif p[2] == '//':
-        p[0] = p[1] // p[3]
+        if type(p[1]) == tuple:
+            p[0] = listINTD(p[1],p[3])
+        else:
+            p[0] = p[1] // p[3]
     elif p[2] == '/':
-        p[0] = p[1] / p[3]
+        if type(p[1]) == tuple:
+            p[0] = listDiv(p[1],p[3])
+        else:
+            p[0] = p[1] / p[3]
     
 ## flattens a tuple - useful for p_list
 ## idea from:
@@ -122,7 +194,7 @@ def p_expression_trailing(p):
     p[0] = p[1]
 
 
-def p_expression_uminus(p):
+def p_expression_uminus(p):                   
     "expression : '-' expression %prec UMINUS"
     p[0] = -p[2]
 
@@ -164,3 +236,7 @@ while True:
     if not s:
         continue
     yacc.parse(s)
+
+### Note: python calcx.py < samplei.txt > out.txt
+### above line in terminal will call calcx.py on samplei.txt, and store the
+### result in out.txt

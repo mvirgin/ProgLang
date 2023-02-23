@@ -1,0 +1,25 @@
+2 + 3
+hello = (2 + 3) * 7
+y = 4 * hello + 3
+y
+y = (2, 3, hello)
+y
+hello = (2, 2, 2) * y
+hello
+hello = hello // y
+hello
+dos = (17 % 5)
+y =  (dos, dos, 2 * dos) * y + (6, 0, 2)
+y
+z = (1) + (2)
+z
+z = (1,) + (2,)
+z
+emptylist = ()
+emptylist + emptylist
+x = ((2) + (1984 % (9 // 4)),)
+x
+x = ((2) + (1984 % (9 // 4)))
+x
+x = (x+3*x, (17*x + 3) % (50 // 8), 3*x+1)
+x + x * (3, 1, 4)
