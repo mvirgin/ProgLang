@@ -1,1 +1,818 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     statement -> NAME = expression
+Rule 2     statement -> expression
+Rule 3     expression -> expression + expression
+Rule 4     expression -> expression - expression
+Rule 5     expression -> expression * expression
+Rule 6     expression -> expression % expression
+Rule 7     expression -> expression , expression
+Rule 8     expression -> expression INTD expression
+Rule 9     expression -> expression / expression
+Rule 10    list -> ( expression )
+Rule 11    list -> ( expression , )
+Rule 12    list -> ( , )
+Rule 13    list -> ( )
+Rule 14    expression -> list
+Rule 15    expression -> - expression
+Rule 16    expression -> NUMBER
+Rule 17    expression -> NAME
+
+Terminals, with rules where they appear
+
+%                    : 6
+(                    : 10 11 12 13
+)                    : 10 11 12 13
+*                    : 5
++                    : 3
+,                    : 7 11 12
+-                    : 4 15
+/                    : 9
+=                    : 1
+INTD                 : 8
+NAME                 : 1 17
+NUMBER               : 16
+error                : 
+
+Nonterminals, with rules where they appear
+
+expression           : 1 2 3 3 4 4 5 5 6 6 7 7 8 8 9 9 10 11 15
+list                 : 14
+statement            : 0
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (1) statement -> . NAME = expression
+    (2) statement -> . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    NAME            shift and go to state 2
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    (               shift and go to state 7
+
+    statement                      shift and go to state 1
+    expression                     shift and go to state 3
+    list                           shift and go to state 5
+
+state 1
+
+    (0) S' -> statement .
+
+
+
+state 2
+
+    (1) statement -> NAME . = expression
+    (17) expression -> NAME .
+
+    =               shift and go to state 8
+    +               reduce using rule 17 (expression -> NAME .)
+    -               reduce using rule 17 (expression -> NAME .)
+    *               reduce using rule 17 (expression -> NAME .)
+    %               reduce using rule 17 (expression -> NAME .)
+    ,               reduce using rule 17 (expression -> NAME .)
+    INTD            reduce using rule 17 (expression -> NAME .)
+    /               reduce using rule 17 (expression -> NAME .)
+    $end            reduce using rule 17 (expression -> NAME .)
+
+
+state 3
+
+    (2) statement -> expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    $end            reduce using rule 2 (statement -> expression .)
+    +               shift and go to state 9
+    -               shift and go to state 10
+    *               shift and go to state 11
+    %               shift and go to state 12
+    ,               shift and go to state 13
+    INTD            shift and go to state 14
+    /               shift and go to state 15
+
+
+state 4
+
+    (15) expression -> - . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 16
+    list                           shift and go to state 5
+
+state 5
+
+    (14) expression -> list .
+
+    +               reduce using rule 14 (expression -> list .)
+    -               reduce using rule 14 (expression -> list .)
+    *               reduce using rule 14 (expression -> list .)
+    %               reduce using rule 14 (expression -> list .)
+    ,               reduce using rule 14 (expression -> list .)
+    INTD            reduce using rule 14 (expression -> list .)
+    /               reduce using rule 14 (expression -> list .)
+    $end            reduce using rule 14 (expression -> list .)
+    )               reduce using rule 14 (expression -> list .)
+
+
+state 6
+
+    (16) expression -> NUMBER .
+
+    +               reduce using rule 16 (expression -> NUMBER .)
+    -               reduce using rule 16 (expression -> NUMBER .)
+    *               reduce using rule 16 (expression -> NUMBER .)
+    %               reduce using rule 16 (expression -> NUMBER .)
+    ,               reduce using rule 16 (expression -> NUMBER .)
+    INTD            reduce using rule 16 (expression -> NUMBER .)
+    /               reduce using rule 16 (expression -> NUMBER .)
+    $end            reduce using rule 16 (expression -> NUMBER .)
+    )               reduce using rule 16 (expression -> NUMBER .)
+
+
+state 7
+
+    (10) list -> ( . expression )
+    (11) list -> ( . expression , )
+    (12) list -> ( . , )
+    (13) list -> ( . )
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    ,               shift and go to state 20
+    )               shift and go to state 19
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 18
+    list                           shift and go to state 5
+
+state 8
+
+    (1) statement -> NAME = . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 21
+    list                           shift and go to state 5
+
+state 9
+
+    (3) expression -> expression + . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 22
+    list                           shift and go to state 5
+
+state 10
+
+    (4) expression -> expression - . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 23
+    list                           shift and go to state 5
+
+state 11
+
+    (5) expression -> expression * . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 24
+    list                           shift and go to state 5
+
+state 12
+
+    (6) expression -> expression % . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 25
+    list                           shift and go to state 5
+
+state 13
+
+    (7) expression -> expression , . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 26
+    list                           shift and go to state 5
+
+state 14
+
+    (8) expression -> expression INTD . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 27
+    list                           shift and go to state 5
+
+state 15
+
+    (9) expression -> expression / . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 28
+    list                           shift and go to state 5
+
+state 16
+
+    (15) expression -> - expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    +               reduce using rule 15 (expression -> - expression .)
+    -               reduce using rule 15 (expression -> - expression .)
+    *               reduce using rule 15 (expression -> - expression .)
+    %               reduce using rule 15 (expression -> - expression .)
+    ,               reduce using rule 15 (expression -> - expression .)
+    INTD            reduce using rule 15 (expression -> - expression .)
+    /               reduce using rule 15 (expression -> - expression .)
+    $end            reduce using rule 15 (expression -> - expression .)
+    )               reduce using rule 15 (expression -> - expression .)
+
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! *               [ shift and go to state 11 ]
+  ! %               [ shift and go to state 12 ]
+  ! ,               [ shift and go to state 13 ]
+  ! INTD            [ shift and go to state 14 ]
+  ! /               [ shift and go to state 15 ]
+
+
+state 17
+
+    (17) expression -> NAME .
+
+    +               reduce using rule 17 (expression -> NAME .)
+    -               reduce using rule 17 (expression -> NAME .)
+    *               reduce using rule 17 (expression -> NAME .)
+    %               reduce using rule 17 (expression -> NAME .)
+    ,               reduce using rule 17 (expression -> NAME .)
+    INTD            reduce using rule 17 (expression -> NAME .)
+    /               reduce using rule 17 (expression -> NAME .)
+    $end            reduce using rule 17 (expression -> NAME .)
+    )               reduce using rule 17 (expression -> NAME .)
+
+
+state 18
+
+    (10) list -> ( expression . )
+    (11) list -> ( expression . , )
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    )               shift and go to state 29
+    ,               shift and go to state 30
+    +               shift and go to state 9
+    -               shift and go to state 10
+    *               shift and go to state 11
+    %               shift and go to state 12
+    INTD            shift and go to state 14
+    /               shift and go to state 15
+
+
+state 19
+
+    (13) list -> ( ) .
+
+    +               reduce using rule 13 (list -> ( ) .)
+    -               reduce using rule 13 (list -> ( ) .)
+    *               reduce using rule 13 (list -> ( ) .)
+    %               reduce using rule 13 (list -> ( ) .)
+    ,               reduce using rule 13 (list -> ( ) .)
+    INTD            reduce using rule 13 (list -> ( ) .)
+    /               reduce using rule 13 (list -> ( ) .)
+    $end            reduce using rule 13 (list -> ( ) .)
+    )               reduce using rule 13 (list -> ( ) .)
+
+
+state 20
+
+    (12) list -> ( , . )
+
+    )               shift and go to state 31
+
+
+state 21
+
+    (1) statement -> NAME = expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    $end            reduce using rule 1 (statement -> NAME = expression .)
+    +               shift and go to state 9
+    -               shift and go to state 10
+    *               shift and go to state 11
+    %               shift and go to state 12
+    ,               shift and go to state 13
+    INTD            shift and go to state 14
+    /               shift and go to state 15
+
+
+state 22
+
+    (3) expression -> expression + expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    +               reduce using rule 3 (expression -> expression + expression .)
+    -               reduce using rule 3 (expression -> expression + expression .)
+    ,               reduce using rule 3 (expression -> expression + expression .)
+    $end            reduce using rule 3 (expression -> expression + expression .)
+    )               reduce using rule 3 (expression -> expression + expression .)
+    *               shift and go to state 11
+    %               shift and go to state 12
+    INTD            shift and go to state 14
+    /               shift and go to state 15
+
+  ! *               [ reduce using rule 3 (expression -> expression + expression .) ]
+  ! %               [ reduce using rule 3 (expression -> expression + expression .) ]
+  ! INTD            [ reduce using rule 3 (expression -> expression + expression .) ]
+  ! /               [ reduce using rule 3 (expression -> expression + expression .) ]
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! ,               [ shift and go to state 13 ]
+
+
+state 23
+
+    (4) expression -> expression - expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    +               reduce using rule 4 (expression -> expression - expression .)
+    -               reduce using rule 4 (expression -> expression - expression .)
+    ,               reduce using rule 4 (expression -> expression - expression .)
+    $end            reduce using rule 4 (expression -> expression - expression .)
+    )               reduce using rule 4 (expression -> expression - expression .)
+    *               shift and go to state 11
+    %               shift and go to state 12
+    INTD            shift and go to state 14
+    /               shift and go to state 15
+
+  ! *               [ reduce using rule 4 (expression -> expression - expression .) ]
+  ! %               [ reduce using rule 4 (expression -> expression - expression .) ]
+  ! INTD            [ reduce using rule 4 (expression -> expression - expression .) ]
+  ! /               [ reduce using rule 4 (expression -> expression - expression .) ]
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! ,               [ shift and go to state 13 ]
+
+
+state 24
+
+    (5) expression -> expression * expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    +               reduce using rule 5 (expression -> expression * expression .)
+    -               reduce using rule 5 (expression -> expression * expression .)
+    *               reduce using rule 5 (expression -> expression * expression .)
+    %               reduce using rule 5 (expression -> expression * expression .)
+    ,               reduce using rule 5 (expression -> expression * expression .)
+    INTD            reduce using rule 5 (expression -> expression * expression .)
+    /               reduce using rule 5 (expression -> expression * expression .)
+    $end            reduce using rule 5 (expression -> expression * expression .)
+    )               reduce using rule 5 (expression -> expression * expression .)
+
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! *               [ shift and go to state 11 ]
+  ! %               [ shift and go to state 12 ]
+  ! ,               [ shift and go to state 13 ]
+  ! INTD            [ shift and go to state 14 ]
+  ! /               [ shift and go to state 15 ]
+
+
+state 25
+
+    (6) expression -> expression % expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    +               reduce using rule 6 (expression -> expression % expression .)
+    -               reduce using rule 6 (expression -> expression % expression .)
+    *               reduce using rule 6 (expression -> expression % expression .)
+    %               reduce using rule 6 (expression -> expression % expression .)
+    ,               reduce using rule 6 (expression -> expression % expression .)
+    INTD            reduce using rule 6 (expression -> expression % expression .)
+    /               reduce using rule 6 (expression -> expression % expression .)
+    $end            reduce using rule 6 (expression -> expression % expression .)
+    )               reduce using rule 6 (expression -> expression % expression .)
+
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! *               [ shift and go to state 11 ]
+  ! %               [ shift and go to state 12 ]
+  ! ,               [ shift and go to state 13 ]
+  ! INTD            [ shift and go to state 14 ]
+  ! /               [ shift and go to state 15 ]
+
+
+state 26
+
+    (7) expression -> expression , expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    ,               reduce using rule 7 (expression -> expression , expression .)
+    $end            reduce using rule 7 (expression -> expression , expression .)
+    )               reduce using rule 7 (expression -> expression , expression .)
+    +               shift and go to state 9
+    -               shift and go to state 10
+    *               shift and go to state 11
+    %               shift and go to state 12
+    INTD            shift and go to state 14
+    /               shift and go to state 15
+
+  ! +               [ reduce using rule 7 (expression -> expression , expression .) ]
+  ! -               [ reduce using rule 7 (expression -> expression , expression .) ]
+  ! *               [ reduce using rule 7 (expression -> expression , expression .) ]
+  ! %               [ reduce using rule 7 (expression -> expression , expression .) ]
+  ! INTD            [ reduce using rule 7 (expression -> expression , expression .) ]
+  ! /               [ reduce using rule 7 (expression -> expression , expression .) ]
+  ! ,               [ shift and go to state 13 ]
+
+
+state 27
+
+    (8) expression -> expression INTD expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    +               reduce using rule 8 (expression -> expression INTD expression .)
+    -               reduce using rule 8 (expression -> expression INTD expression .)
+    *               reduce using rule 8 (expression -> expression INTD expression .)
+    %               reduce using rule 8 (expression -> expression INTD expression .)
+    ,               reduce using rule 8 (expression -> expression INTD expression .)
+    INTD            reduce using rule 8 (expression -> expression INTD expression .)
+    /               reduce using rule 8 (expression -> expression INTD expression .)
+    $end            reduce using rule 8 (expression -> expression INTD expression .)
+    )               reduce using rule 8 (expression -> expression INTD expression .)
+
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! *               [ shift and go to state 11 ]
+  ! %               [ shift and go to state 12 ]
+  ! ,               [ shift and go to state 13 ]
+  ! INTD            [ shift and go to state 14 ]
+  ! /               [ shift and go to state 15 ]
+
+
+state 28
+
+    (9) expression -> expression / expression .
+    (3) expression -> expression . + expression
+    (4) expression -> expression . - expression
+    (5) expression -> expression . * expression
+    (6) expression -> expression . % expression
+    (7) expression -> expression . , expression
+    (8) expression -> expression . INTD expression
+    (9) expression -> expression . / expression
+
+    +               reduce using rule 9 (expression -> expression / expression .)
+    -               reduce using rule 9 (expression -> expression / expression .)
+    *               reduce using rule 9 (expression -> expression / expression .)
+    %               reduce using rule 9 (expression -> expression / expression .)
+    ,               reduce using rule 9 (expression -> expression / expression .)
+    INTD            reduce using rule 9 (expression -> expression / expression .)
+    /               reduce using rule 9 (expression -> expression / expression .)
+    $end            reduce using rule 9 (expression -> expression / expression .)
+    )               reduce using rule 9 (expression -> expression / expression .)
+
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! *               [ shift and go to state 11 ]
+  ! %               [ shift and go to state 12 ]
+  ! ,               [ shift and go to state 13 ]
+  ! INTD            [ shift and go to state 14 ]
+  ! /               [ shift and go to state 15 ]
+
+
+state 29
+
+    (10) list -> ( expression ) .
+
+    +               reduce using rule 10 (list -> ( expression ) .)
+    -               reduce using rule 10 (list -> ( expression ) .)
+    *               reduce using rule 10 (list -> ( expression ) .)
+    %               reduce using rule 10 (list -> ( expression ) .)
+    ,               reduce using rule 10 (list -> ( expression ) .)
+    INTD            reduce using rule 10 (list -> ( expression ) .)
+    /               reduce using rule 10 (list -> ( expression ) .)
+    $end            reduce using rule 10 (list -> ( expression ) .)
+    )               reduce using rule 10 (list -> ( expression ) .)
+
+
+state 30
+
+    (11) list -> ( expression , . )
+    (7) expression -> expression , . expression
+    (3) expression -> . expression + expression
+    (4) expression -> . expression - expression
+    (5) expression -> . expression * expression
+    (6) expression -> . expression % expression
+    (7) expression -> . expression , expression
+    (8) expression -> . expression INTD expression
+    (9) expression -> . expression / expression
+    (14) expression -> . list
+    (15) expression -> . - expression
+    (16) expression -> . NUMBER
+    (17) expression -> . NAME
+    (10) list -> . ( expression )
+    (11) list -> . ( expression , )
+    (12) list -> . ( , )
+    (13) list -> . ( )
+
+    )               shift and go to state 32
+    -               shift and go to state 4
+    NUMBER          shift and go to state 6
+    NAME            shift and go to state 17
+    (               shift and go to state 7
+
+    expression                     shift and go to state 26
+    list                           shift and go to state 5
+
+state 31
+
+    (12) list -> ( , ) .
+
+    +               reduce using rule 12 (list -> ( , ) .)
+    -               reduce using rule 12 (list -> ( , ) .)
+    *               reduce using rule 12 (list -> ( , ) .)
+    %               reduce using rule 12 (list -> ( , ) .)
+    ,               reduce using rule 12 (list -> ( , ) .)
+    INTD            reduce using rule 12 (list -> ( , ) .)
+    /               reduce using rule 12 (list -> ( , ) .)
+    $end            reduce using rule 12 (list -> ( , ) .)
+    )               reduce using rule 12 (list -> ( , ) .)
+
+
+state 32
+
+    (11) list -> ( expression , ) .
+
+    +               reduce using rule 11 (list -> ( expression , ) .)
+    -               reduce using rule 11 (list -> ( expression , ) .)
+    *               reduce using rule 11 (list -> ( expression , ) .)
+    %               reduce using rule 11 (list -> ( expression , ) .)
+    ,               reduce using rule 11 (list -> ( expression , ) .)
+    INTD            reduce using rule 11 (list -> ( expression , ) .)
+    /               reduce using rule 11 (list -> ( expression , ) .)
+    $end            reduce using rule 11 (list -> ( expression , ) .)
+    )               reduce using rule 11 (list -> ( expression , ) .)
+

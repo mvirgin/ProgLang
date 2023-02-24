@@ -5,5 +5,8 @@ lists of the same size.
 
 Code written by Matthew Virgin for COS 301
 
-25 test cases are included in samplei.txt
-the outputs of these test cases are included in out.txt
+25 test cases are included in sampleip.txt, provided by the professor
+the outputs of these test cases are included in outp.txt
+
+samplei1.txt - samplei5.txt feature 20 test cases each, with the output of these
+stored as out1.txt - out5.txt

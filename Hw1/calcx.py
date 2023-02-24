@@ -49,8 +49,9 @@ lexer = lex.lex()
 
 # Parsing rules
 
-## added INTD (i.e //) and % to precedence
+## added ',' INTD (i.e //) and % to precedence
 precedence = (
+    ('left', ','),
     ('left', '+', '-'),
     ('left', '*', '/', 'INTD', '%'),
     ('right', 'UMINUS'),
@@ -113,7 +114,7 @@ def listINTD(a,b):
     result = tuple(result)
     return result
 
-def p_expression_binop(p): #** add more for LIST + LIST, etc
+def p_expression_binop(p): 
     '''expression : expression '+' expression
                   | expression '-' expression
                   | expression '*' expression
@@ -121,7 +122,7 @@ def p_expression_binop(p): #** add more for LIST + LIST, etc
                   | expression ',' expression
                   | expression INTD expression
                   | expression '/' expression '''
-    if p[2] == '+':
+    if p[2] == '+':            
         if type(p[1]) == tuple:
             p[0] = listAdd(p[1],p[3])
         else:               
@@ -168,40 +169,36 @@ def flatten(data):                   # takes a piece of data
         return (data,)               # done when data no longer nested
 
 
-def p_list(p):
-    "LIST : '(' expression ',' expression ')' "
-    p[0] = flatten((p[2], p[4]))
+def p_list(p):                    
+    "list : '(' expression ')' "
+    if type(p[2]) == int:           # i.e just an expression, should drop ()
+        p[0] = p[2]
+    else:
+        p[0] = flatten((p[2]))
 
 
-def p_singleton(p):
-    "LIST : '(' expression ',' ')'"
-    p[0] = (p[2],)
+def p_list_comma(p):
+    "list : '(' expression ',' ')'"
+    if type(p[2]) == int:           # i.e singleton
+        p[0] = (p[2],)
+    else:
+        p[0] = flatten((p[2]))
     
 
 def p_empty_list(p):
-    '''LIST : '(' ',' ')'
+    '''list : '(' ',' ')'
             | '(' ')' '''
     p[0] = ()
 
 
 def p_expression_list(p):
-    "expression : LIST"
-    p[0] = p[1]
-
-
-def p_expression_trailing(p):
-    "expression : expression ',' "
+    "expression : list"
     p[0] = p[1]
 
 
 def p_expression_uminus(p):                   
     "expression : '-' expression %prec UMINUS"
     p[0] = -p[2]
-
-
-def p_expression_group(p):
-    "expression : '(' expression ')'"
-    p[0] = p[2]
 
 
 def p_expression_number(p):
