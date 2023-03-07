@@ -1,0 +1,6 @@
+## This is how you run jcoco assembly code
+coco -v blah.casm
+## -v prints stderr, omit for only stdout
+
+## actually adding to path isn't working so do this:
+java -jar JCoCo.jar test.casm
