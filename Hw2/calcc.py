@@ -18,6 +18,17 @@
 
 import sys # so I can output to stderr
 
+casm_locals = {None:0}
+casm_constants = {None:0} 
+casm_globals = {'print':0} 
+casm_instructions = [] 
+
+# Add a list of tuples encoding casm instructions to the global list.
+def append_instructions(lst):
+    global casm_instructions
+    casm_instructions += lst
+
+
 tokens = (
     'NAME', 'NUMBER', 'INTD', 
 )
@@ -69,7 +80,13 @@ def p_statement_assign(p):
 
 def p_statement_expr(p):                          
     'statement : expression'
-    print(p[1]) # this is output, goes to standard output
+    append_instructions([
+        ('LOAD_GLOBAL', 0),
+        ('ROT_TWO',),
+        ('CALL_FUNCTION', 1),
+        ('POP_TOP',),
+    ])
+    # print(p[1]) # this is output, goes to standard output - *not printing anything, no need to w compiler
 
 
 def p_expression_binop(p): 
@@ -79,36 +96,48 @@ def p_expression_binop(p):
                   | expression '%' expression
                   | expression INTD expression
                   | expression '/' expression '''
-    if p[2] == '+':                        
-        p[0] = p[1] + p[3]
+    if p[2] == '+':
+        append_instructions([('BINARY_ADD',)])
+        p[0] = p[1] + p[3]                        
     elif p[2] == '-':
+        append_instructions([('BINARY_SUBTRACT',)])     #* might need to watch for whats getting subtracted from what, same with others
         p[0] = p[1] - p[3]
     elif p[2] == '*':
-        p[0] = p[1] * p[3]
+        append_instructions([('BINARY_MULTIPLY',)])
+        p[0] = p[1] * p[3] 
     elif p[2] == '%':
-        p[0] = p[1] % p[3]
+        append_instructions([('BINARY_MODULO',)])
+        p[0] = p[1] % p[3] 
     elif p[2] == '//':
+        append_instructions([('BINARY_FLOOR_DIVIDE',)]) 
         p[0] = p[1] // p[3]
     elif p[2] == '/':
-        p[0] = p[1] / p[3]
+        append_instructions([('BINARY_TRUE_DIVIDE',)])
+        p[0] = p[1] / p[3]                              #* is it technically cheating if i let it interpret like this, then just shove into jcoco? 
 
 
 def p_expression_uminus(p):                   
     "expression : '-' expression %prec UMINUS"
-    p[0] = -p[2]
+    append_instructions([('LOAD_CONST', constants_index((-1)*int(p[2]))),])
+    p[0] = -p[2]    #* keep this stuff so it will have the correct value in there when I pull it for jcoco
 
 def p_expression_group(p):
     "expression : '(' expression ')'"
+    append_instructions([('LOAD_CONST', constants_index(p[2])),])
     p[0] = p[2]
 
-def p_expression_number(p):
-    "expression : NUMBER"
+def p_expression_number(p):         ##**NEED TO CHANGE BOTH THIS AND EXPRESSION_NAME SO I'M NOT CHEATING IT - NEED IFs?!? - use try and except for when p[-1] doesn't exist (just 22 for ex)
+    "expression : NUMBER"           #* there needs to be an if here for handling x = 22
+    append_instructions([('LOAD_CONST', constants_index(int(p[1]))),])      #* p[-2] gets x in x = 2, p[-1] gets = <- can check for =
     p[0] = p[1]
 
 
-def p_expression_name(p):
+def p_expression_name(p): # * load local ... -- *this is for situations like x = y
     "expression : NAME"
     try:
+        append_instructions([('LOAD_CONST', constants_index(names[p[1]])),])
+        append_instructions([('STORE_FAST', locals_index(p[1])),])     #* store fast or load fast? - new rule?
+        append_instructions([('LOAD_FAST', locals_index(p[1])),])      #* seems like adding locals is making this more complex, do without? - ask prof
         p[0] = names[p[1]]
     except LookupError:
         print("Undefined name '%s'" % p[1], file = sys.stderr)
@@ -125,6 +154,49 @@ def p_error(p):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
+
+## If key is in not in dict d then add it with a value len(d),
+## returning (possibly updated) d and the value corresponding to key.
+def dict_idx(d, key):
+    idx = d.get(key)
+    if idx == None:
+        idx = len(d)
+        d[key] = idx
+    return d, idx
+
+## finds k in casm_constants and returns its index, 
+## if it's not there dict_idx will add it
+def constants_index(k):
+    global casm_constants
+    casm_constants, idx = dict_idx(casm_constants, k) 
+    return idx
+
+def locals_index(k):
+    global casm_locals
+    casm_locals, idx = dict_idx(casm_locals, k)
+    return idx
+
+def print_casm_header_data(hdr_tag, hdr_dict):
+    if hdr_dict:
+        rdict = dict([(idx, k) for (k, idx) in hdr_dict.items()])
+        print(hdr_tag + ':', ', '.join(map(str, rdict.values())))
+
+# tup = (instr) or (instr, arg) or (label, instr, arg)
+# TODO better formatting
+def print_casm_instr(tup):
+    if len(tup) < 3: print('\t', end='')
+    print('\t'.join(map(str,tup)))
+
+def print_casm():
+    append_instructions([('LOAD_CONST', 0), ('RETURN_VALUE',),])
+    print('Function: main/0')
+    print_casm_header_data('Constants', casm_constants)
+    print_casm_header_data('Locals', casm_locals)
+    print_casm_header_data('Globals', casm_globals)
+    print('BEGIN')
+    for tup in casm_instructions: print_casm_instr(tup)
+    print("END")
+
 while True:
     try:
         s = input()
@@ -133,6 +205,7 @@ while True:
     if not s:
         continue
     yacc.parse(s)
+print_casm()
 
 ### Note: python calcx.py < samplei.txt > out.txt
 ### above line in terminal will call calcx.py on samplei.txt, and store the

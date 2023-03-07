@@ -4,3 +4,8 @@ coco -v blah.casm
 
 ## actually adding to path isn't working so do this:
 java -jar JCoCo.jar test.casm
+
+## note that printing anything to stdout for debug purposes will kill jcoco
+
+if it's x = 22, 22 will need to be a Local
+but x = 1 + 2 + 3 <-- 1, 2, and 3 can be locals, but 6 musn't (?) - ask prof
