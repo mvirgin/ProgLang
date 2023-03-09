@@ -1,0 +1,12 @@
+aa = 4+20
+bb = 33 - 2
+cc = 300 * 20
+dd = 65406 / 333
+ee = 666 // 42
+ff = 999 % 8
+aa + bb
+bb - cc
+cc * dd
+dd / ee
+ee // ff
+ff % aa

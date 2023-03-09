@@ -1,0 +1,11 @@
+xyzzy = -300000 + 5 * 7 - 3
+xyzzy
+y = xyzzy + xyzzy
+y
+xyzzy = y + y + y
+xyzzy
+xyzzy * -1
+xyzzy
+xyzzy = xyzzy * -1 % 22
+xyzzy
+y * -1 // 45

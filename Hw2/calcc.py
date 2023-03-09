@@ -18,9 +18,11 @@
 
 import sys # so I can output to stderr
 
+## dictionaries to track locals, constants, and globals to put in .casm file
 casm_locals = {None:0}
 casm_constants = {None:0} 
-casm_globals = {'print':0} 
+casm_globals = {'print':0}
+## list of instructions to be used in .casm file 
 casm_instructions = [] 
 
 # Add a list of tuples encoding casm instructions to the global list.
@@ -63,7 +65,7 @@ lexer = lex.lex()
 
 # Parsing rules
 
-## added ',' INTD (i.e //) and % to precedence
+## added INTD (i.e //) and % to precedence
 precedence = (
     ('left', '+', '-'),
     ('left', '*', '/', 'INTD', '%'),
@@ -75,7 +77,7 @@ names = {}
 
 def p_statement_assign(p):
     'statement : NAME "=" expression'
-    names[p[1]] = p[3]
+    append_instructions([('STORE_FAST', locals_index(p[1]))])
 
 
 def p_statement_expr(p):                          
@@ -86,7 +88,6 @@ def p_statement_expr(p):
         ('CALL_FUNCTION', 1),
         ('POP_TOP',),
     ])
-    # print(p[1]) # this is output, goes to standard output - *not printing anything, no need to w compiler
 
 
 def p_expression_binop(p): 
@@ -97,51 +98,38 @@ def p_expression_binop(p):
                   | expression INTD expression
                   | expression '/' expression '''
     if p[2] == '+':
-        append_instructions([('BINARY_ADD',)])
-        p[0] = p[1] + p[3]                        
+        append_instructions([('BINARY_ADD',)])                       
     elif p[2] == '-':
-        append_instructions([('BINARY_SUBTRACT',)])     #* might need to watch for whats getting subtracted from what, same with others
-        p[0] = p[1] - p[3]
+        append_instructions([('BINARY_SUBTRACT',)])    
     elif p[2] == '*':
         append_instructions([('BINARY_MULTIPLY',)])
-        p[0] = p[1] * p[3] 
     elif p[2] == '%':
         append_instructions([('BINARY_MODULO',)])
-        p[0] = p[1] % p[3] 
     elif p[2] == '//':
         append_instructions([('BINARY_FLOOR_DIVIDE',)]) 
-        p[0] = p[1] // p[3]
     elif p[2] == '/':
-        append_instructions([('BINARY_TRUE_DIVIDE',)])
-        p[0] = p[1] / p[3]                              #* is it technically cheating if i let it interpret like this, then just shove into jcoco? 
+        append_instructions([('BINARY_TRUE_DIVIDE',)]) 
 
 
-def p_expression_uminus(p):                   
+def p_expression_uminus(p):
     "expression : '-' expression %prec UMINUS"
-    append_instructions([('LOAD_CONST', constants_index((-1)*int(p[2]))),])
-    p[0] = -p[2]    #* keep this stuff so it will have the correct value in there when I pull it for jcoco
+    append_instructions([('LOAD_CONST', constants_index(-1)),])
+    append_instructions([('BINARY_MULTIPLY',)])
 
 def p_expression_group(p):
     "expression : '(' expression ')'"
-    append_instructions([('LOAD_CONST', constants_index(p[2])),])
-    p[0] = p[2]
+    # do nothing, expression is already on stack
 
-def p_expression_number(p):         ##**NEED TO CHANGE BOTH THIS AND EXPRESSION_NAME SO I'M NOT CHEATING IT - NEED IFs?!? - use try and except for when p[-1] doesn't exist (just 22 for ex)
-    "expression : NUMBER"           #* there needs to be an if here for handling x = 22
-    append_instructions([('LOAD_CONST', constants_index(int(p[1]))),])      #* p[-2] gets x in x = 2, p[-1] gets = <- can check for =
-    p[0] = p[1]
+def p_expression_number(p):         
+    "expression : NUMBER"           
+    append_instructions([('LOAD_CONST', constants_index(int(p[1]))),])
 
-
-def p_expression_name(p): # * load local ... -- *this is for situations like x = y
+def p_expression_name(p):
     "expression : NAME"
     try:
-        append_instructions([('LOAD_CONST', constants_index(names[p[1]])),])
-        append_instructions([('STORE_FAST', locals_index(p[1])),])     #* store fast or load fast? - new rule?
-        append_instructions([('LOAD_FAST', locals_index(p[1])),])      #* seems like adding locals is making this more complex, do without? - ask prof
-        p[0] = names[p[1]]
+        append_instructions([('LOAD_FAST', locals_index(p[1])),])
     except LookupError:
         print("Undefined name '%s'" % p[1], file = sys.stderr)
-        p[0] = 0
 
 
 def p_error(p):
@@ -207,6 +195,6 @@ while True:
     yacc.parse(s)
 print_casm()
 
-### Note: python calcx.py < samplei.txt > out.txt
-### above line in terminal will call calcx.py on samplei.txt, and store the
-### result in out.txt
+### Note: python calcc.py < samplei.txt > out.casm
+### above line in terminal will call calcc.py on samplei.txt, and store the
+### result in out.casm, which can be run using jcoco to see result
